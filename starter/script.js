@@ -277,5 +277,31 @@ btnLogin.addEventListener('click', function (e) {
           console.log(Math.trunc(-23.8));
           console.log(Math.floor(-23.8));
           
-          console.log(typeof Number((2.73472630).toFixed(5)))
-          
+console.log(typeof Number((2.73472630).toFixed(5)));
+/*
+console.log(2 ** 53 - 1);
+console.log(Number.MAX_SAFE_INTEGER);
+console.log(Number.MAX_VALUE);
+console.log(546326546545561365465451231n)
+console.log(BigInt(90071992547409911))
+
+console.log(new Date());
+console.log(new Date("2021 May 17 10:34"));
+console.log(new Date('2019-12-23T07:42:02.383Z'));
+console.log(new Date(1968, 6, 9, 5, 35, 1))
+console.log(new Date(1000000000));
+*/
+
+const future = new Date(1978, 6, 9, 5, 35);
+console.log(future);
+console.log(future.getFullYear());
+console.log(future.getYear());
+console.log(future.getMonth());
+console.log(future.toISOString());
+console.log(future.getTime());
+
+console.log(new Date(268824900000));
+console.log(Date.now());
+
+future.setFullYear(2023);
+console.log(future);
