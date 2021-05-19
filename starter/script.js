@@ -21,9 +21,9 @@ const account1 = {
     '2020-01-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
     '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2021-05-16T17:01:17.194Z',
+    '2021-05-17T23:36:17.929Z',
+    '2021-05-18T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -85,17 +85,46 @@ const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
   
   const movs = sort ? acc.movements.slice().sort((a, b) => a - b) : acc.movements;
+
+  const calculateDate = (movDate) => {
+      
+    const dateDiff = Math.trunc((new Date() - movDate) / (24 * 60 * 60 * 1000));
+  
+    let display;
+    switch (true) {
+      case dateDiff < 1:
+        display = "today";
+        break;
+      case dateDiff === 1:
+        display = "yesterday";
+        break;
+      case dateDiff === 2:
+        display = "two days ago";
+        break;
+      case dateDiff === 3:
+        display = "three days ago";
+        break;
+      default:
+        const year = `${movDate.getFullYear()}`;
+        const month = `${movDate.getMonth() + 1}`.padStart(2, "0");
+        const day = `${movDate.getDate()}`.padStart(2, "0");
+        display = `${day}/${month}/${year}`
+    };
+
+    return display;
+  }
   
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     
-    const date = new Date(acc.movementsDates[i]);
-    const year = `${date.getFullYear()}`;
-    const month = `${date.getMonth() + 1}`.padStart(2, "0");
-    const day = `${date.getDate()}`.padStart(2, "0");
+    // const date = new Date(acc.movementsDates[i]);
+    // const year = `${date.getFullYear()}`;
+    // const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    // const day = `${date.getDate()}`.padStart(2, "0");
 
-    const displayDate = `${day}/${month}/${year}`
-    
+    // const displayDate = `${day}/${month}/${year}`
+    const displayDate = calculateDate(new Date(acc.movementsDates[i]))
+        
     const html = `
     <div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
@@ -319,7 +348,23 @@ console.log(new Date(1968, 6, 9, 5, 35, 1))
 console.log(new Date(1000000000));
 */
 
-const future = new Date(1978, 6, 9, 5, 35);
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future);
+console.log(Number(future));
+console.log(+future);
+
+const calcDaysPassed = (date1, date2) => {
+  return (
+    Math.abs((date2 - date1) / (1000 * 24 * 60 * 60))
+  );
+}
+
+const days1 = calcDaysPassed( new Date(2037, 3, 24), new Date(2037, 3, 14) );
+
+console.log(days1);
+
+
+/*
 console.log(future);
 console.log(future.getFullYear());
 console.log(future.getYear());
@@ -332,3 +377,4 @@ console.log(Date.now());
 
 future.setFullYear(2023);
 console.log(future);
+*/
