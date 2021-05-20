@@ -105,14 +105,25 @@ const displayMovements = function (acc, sort = false) {
         display = "three days ago";
         break;
       default:
-        const year = `${movDate.getFullYear()}`;
-        const month = `${movDate.getMonth() + 1}`.padStart(2, "0");
-        const day = `${movDate.getDate()}`.padStart(2, "0");
-        display = `${day}/${month}/${year}`
+        // const year = `${movDate.getFullYear()}`;
+        // const month = `${movDate.getMonth() + 1}`.padStart(2, "0");
+        // const day = `${movDate.getDate()}`.padStart(2, "0");
+        // display = `${day}/${month}/${year}`
+        const locale = navigator.language;
+        display = new Intl.DateTimeFormat(locale).format(movDate);
     };
 
     return display;
   }
+
+  const formatMovement = function (movement) {
+    const options = {
+      style: "currency",
+      currency: "USD",
+      useGrouping: true,
+    }
+    return new Intl.NumberFormat("en-US", options).format(movement);
+  };
   
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
@@ -123,13 +134,13 @@ const displayMovements = function (acc, sort = false) {
     // const day = `${date.getDate()}`.padStart(2, "0");
 
     // const displayDate = `${day}/${month}/${year}`
-    const displayDate = calculateDate(new Date(acc.movementsDates[i]))
-        
+    const displayDate = calculateDate( new Date(acc.movementsDates[i]) );
+
     const html = `
     <div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
     <div class="movements__date">${displayDate}</div>
-    <div class="movements__value">${(mov).toFixed(2)}€</div>
+    <div class="movements__value">${(formatMovement(mov))}</div>
     </div>
     `;
     
@@ -148,22 +159,33 @@ const displayMovements = function (acc, sort = false) {
 //   });
 // });
 
+const formatMovement = function (movement) {
+  const options = {
+    style: "currency",
+    currency: "USD",
+    useGrouping: true,
+  }
+  return new Intl.NumberFormat("en-US", options).format(movement);
+};
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  // labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = `${formatMovement(acc.balance)}`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
   .filter(mov => mov > 0)
   .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  // labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = `${formatMovement(incomes)}`;
   
   const out = acc.movements
   .filter(mov => mov < 0)
   .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
+  // labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
+  labelSumOut.textContent = `${formatMovement(Math.abs(out))}`;
   
   const interest = acc.movements
   .filter(mov => mov > 0)
@@ -173,7 +195,8 @@ const calcDisplaySummary = function (acc) {
     return int >= 1;
   })
   .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  // labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = `${formatMovement(interest)}`;
 };
 
 const createUsernames = function (accs) {
@@ -227,12 +250,23 @@ btnLogin.addEventListener('click', function (e) {
       containerApp.style.opacity = 100;
 
       const now = new Date();
-      const day = `${now.getDate()}`.padStart(2, "0");
-      const month = `${now.getMonth() + 1}`.padStart(2, "0");
-      const year = now.getFullYear();
-      const hour = `${now.getHours()}`.padStart(2, "0");
-      const minute = `${now.getMinutes()}`.padStart(2, "0");
-      labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`;
+      const options = {
+        hour: "numeric",
+        minute: "numeric",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        weekday: "long",
+      }
+      
+      // const day = `${now.getDate()}`.padStart(2, "0");
+      // const month = `${now.getMonth() + 1}`.padStart(2, "0");
+      // const year = now.getFullYear();
+      // const hour = `${now.getHours()}`.padStart(2, "0");
+      // const minute = `${now.getMinutes()}`.padStart(2, "0");
+      // labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`;
+      const locale = navigator.language
+      labelDate.textContent = new Intl.DateTimeFormat(locale, options).format(now);
       
       // Clear input fields
       inputLoginUsername.value = inputLoginPin.value = '';
